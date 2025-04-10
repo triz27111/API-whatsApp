@@ -1,96 +1,79 @@
-'use-strict'
+const express = require('express');
+const cors = require('cors');
+const bodyParser = require('body-parser');
 
-async function pesquisarContatos() {
-    const url=`https://giovanna-whatsapp.onrender.com/v1/whatsapp/contatos/11987876567`
-    const response = await fetch(url)
-    const data = await response.json()
-    return data
-}
+const app = express();
 
-function criarContato(link){
-    const contatos=document.getElementById('contatos')
-    const NovoCard=document.createElement('div')
-    NovoCard.classList.add('contato')
+app.use((request, response, next) => {
+    response.header('Access-Control-Allow-Origin', '*');
+    response.header('Access-Control-Allow-Methods', 'GET');
+    app.use(cors());
+    next();
+});
 
-    const NovoPerfil=document.createElement('img')
-    NovoPerfil.scr=link.profile
-    NovoCard.appendChild(NovoPerfil)
 
-    const NovaInfo=document.createElement('div')
-    NovaInfo.classList.add('info')
-    NovoCard.appendChild(NovaInfo)
+const contatos = require('./funcoes.js');
 
-    const NovoNome=document.createElement('p')
-    NovoNome.classList.add('name')
-    NovoNome.textContent=`${link.name}`
-    NovaInfo.appendChild(NovoNome)
-
-    const NovoNumero=document.createElement('p')
-    NovoNumero.textContent=`${link.description}`
-    NovaInfo.appendChild(NovoNumero)
-    
-    NovoCard.appendChild(NovaInfo)
-    contatos.appendChild(NovoCard)
-
-    NovoCard.addEventListener('click', async function(){
-        await preencherConversa(link.name)
-    })
-}
-
-async function preencherContatos() {
-    const contato= await pesquisarContatos()
-    const contatos=document.getElementById('contatos')
-    contatos.replaceChildren('')
-    contato.dados_contato.forEach(criarContato)
-}
-
-/**********************************************************/
-
-async function preencherConversa(name) {
-    const conversa= await pesquisarConversa(name)
-    const conversas=document.getElementById('conversas')
-    conversas.replaceChildren('')
-    conversa.conversas.forEach(criarConversa)
-}
-
-async function pesquisarConversa(name){
-    const url=`https://giovanna-whatsapp.onrender.com/v1/whatsapp/conversas?numero=11987876567&contato=${name}`
-    try {
-        const response = await(url)
-        const data = await response.json()
-        return data
-    } catch (error) {
-        console.error("Erro ao buscar informações:", error)
-        return null
+app.get('/v1/contatos-usuarios/perfil/todososusuarios', cors(), async function(request, response) {
+    let dados = contatos.getTodosOsUsuarios();
+    if (dados) {
+        response.status(200).json(dados);
+    } else {
+        response.status(404).json({ 'status': 404, 'message': 'Não foi encontrado um usuario' });
     }
-}
+});
 
-async function criarConversa(link){
-    const conversas=document.getElementById('conversas')
-    const perfil=document.createElement('div')
-    perfil.classList.add('perfil')
 
-    const imgperfil = document.createElement('img')
-    conversas.appendChild(imgperfil)
+app.get('/v1/contatos/perfil/usuariosprofile', cors(), async function(request, response) {
+    let number = request.params.sigla;
+    let dados = contatos.getPerfilDoUsuario(number);
+    if (dados) {
+        response.status(200).json(dados);
+    } else {
+        response.status(404).json({ 'status': 404, 'message': 'Não foi encontrado um perfil de usuario' });
+    }
+});
 
-    const NovaInfo=document.createElement('div')
-    NovaInfo.classList.add('info')
-    perfil.appendChild(NovaInfo)
 
-    const NovoNome=document.createElement('p')
-    NovoNome.classList.add('name')
-    NovoNome.textContent=`${link.name}`
-    NovaInfo.appendChild(NovoNome)
+app.get('/v1/contatos/contatousuario/usuarios', cors(), async function(request, response) {
+    let uf = request.query.sigla;
+    let dados = contatos.getContatoDoUsuario(uf);
+    if (dados) {
+        response.status(200).json(dados);
+    } else {
+        response.status(404).json({ 'status': 404, 'message': 'Não foi encontrado nehum contato' });
+    }
+});
 
-    const NovoNumero=document.createElement('p')
-    NovoNumero.textContent=`${link.description}`
-    NovaInfo.appendChild(NovoNumero)
+app.get('/v1/contatos/perfilusuario/usuarios/:number', cors(), async function(request, response) {
+    let number = request.params.number;  
+    let dados = contatos.getPerfilDoUsuario(number); 
+    if (dados) {
+        response.status(200).json(dados);
+    } else {
+        response.status(404).json({ 'status': 404, 'message': 'Não foi encontrado um perfil de usuário' });
+    }
+});
 
-    conversas.appendChild(perfil)
 
-    const chat = document.createElement('div')
-    chat.classList.add('chat')
 
-}
+app.get('/v1/contatos-conversas/relacao-chats', cors(), async function(request, response) {
+    let dados = contatos.getConversasRelacionadas();
+    response.status(200).json(dados);
+});
 
-preencherContatos()
+app.get('/v1/palavra-chave/pesquisaporpalavra', cors(), async function(request, response) {
+    let uf = request.query.sigla;
+    let dados = contatos.getPesquisarPorPalavraChave(uf);
+    if (dados) {
+        response.status(200).json(dados);
+    } else {
+        response.status(404).json({ 'status': 404, 'message': 'nenhuma palavra não encontrada' });
+    }
+});
+
+app.listen(8080, function() {
+    console.log('API funcionando e aguardando requisições...');
+});
+
+
