@@ -128,4 +128,28 @@
     border-radius: 20px;
     cursor: pointer;
   }
+  .chat-input button:hover {
+    background-color: #ff6e85;
+  }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .search-btn {
+    background-color: #ff8fa3;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .search-btn:hover {
+    background-color: #ff6e85;
+  }
+  
   
