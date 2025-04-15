@@ -1,56 +1,48 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
-    <script src="./app.js" defer></script>
-    <title>WhatsApp</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WhatsApp Clone</title>
+  <link rel="stylesheet" href="style.css">
+ 
 </head>
 <body>
-    <header>
-        <img src="./img/iconwhatsapp.png" alt="WhatsApp">
-        <h1>API WhatsApp</h1>
-    </header>
-    <main>
-        <div id="contatos">
-            <h2>Conversas</h2>
-            <input type="text" class="icon" id="contats" placeholder="Buscar contatos">
-            <!--
-            <div class="contato">
-                <img src="./img/vitor.jfif" alt="Foto de Gabriel Guedes">
-                <div class="info">
-                    <p class="name">Gabriel Guedes</p>
-                    <p class="tell">99999-9999</p>
-                </div>
-            </div>
-            
-            <div onclick="" class="contato">
-                <img src="./img/vitor.jfif" alt="Foto de Gabriel Guedes">
-                <div class="info">
-                    <p class="name">Gabriel Guedes</p>
-                    <p class="tell">99999-9999</p>
-                </div>
-            </div>
-        </div>-->
-    
-        <div id="conversas">
-            <!--<div class="perfil">
-                <img src="./img/vitor.jfif" alt="Foto de Gabriel Guedes">
-                <div class="info">
-                    <p class="name">Gabriel Guedes</p>
-                    <p class="tell">99999-9999</p>
-                </div>
-            </div>
-            <div class="chat">
-                <p class="sender">oi tudo bem?</p>
-                <p class="autor">Tudo e Você?</p>
-            </div>
-            <div id="message">
-                <input type="text" id="digite">
-                <button class="enviar"> Enviar</button>
-            </div>    -->
-        </div>  
+  <div class="whatsapp-container">
+    <!-- Sidebar com busca -->
+    <aside class="sidebar">
+      <header class="sidebar-header">
+        <h2>Contatos</h2>
+        <input type="text" class="search-input" placeholder="🔍 Buscar contato...">
+      </header>
+      <ul class="contact-list">
+        <!-- Contatos aparecem aqui futuramente -->
+      </ul>
+    </aside>
+
+    <!-- Área de chat vazia -->
+    <main class="chat">
+      <header class="chat-header">
+        <div class="chat-info">
+          <img src="img/perfil2.png" class="avatar" alt="perfil">
+          <h3>Selecione um contato</h3>
+        </div>
+        <div class="chat-actions">
+          <img src="img/chamada.png" alt="audio">
+          <img src="img/video.png" alt="video">
+        </div>
+      </header>
+
+      <div class="chat-messages">
+        <h1>Bem-vindo ao WhatsApp</h1>
+      </div>
+
+      <footer class="chat-input">
+        <input type="text" placeholder="Digite uma mensagem...">
+        <button>Enviar</button>
+      </footer>
     </main>
+  </div>
+
 </body>
 </html>
