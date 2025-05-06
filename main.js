@@ -1,130 +1,99 @@
 'use-strict'
 
-async function pesquisarContatos() {
-    const url=`https://giovanna-whatsapp.onrender.com/v1/whatsapp/contatos/11987876567`
+async function buscarContatos() {
+    const url = `https://giovanna-whatsapp.onrender.com/v1/whatsapp/contatos/11987876567`
     const response = await fetch(url)
     const data = await response.json()
     return data
 }
 
-function criarContato(link){
-    const contatos=document.getElementById('contatos')
-    const NovoCard=document.createElement('div')
-    NovoCard.classList.add('contato')
+function criarCard(contato) {
+    const listaContatos = document.getElementById('contatos')
+    const card = document.createElement('div')
+    card.classList.add('contato')
 
-    const NovoPerfil=document.createElement('img')
-    NovoPerfil.scr=link.profile
-    NovoCard.appendChild(NovoPerfil)
+    const img = document.createElement('img')
+    img.src = contato.profile
+    card.appendChild(img)
 
-    const NovaInfo=document.createElement('div')
-    NovaInfo.classList.add('info')
-    NovoCard.appendChild(NovaInfo)
+    const info = document.createElement('div')
+    info.classList.add('info')
 
-    const NovoNome=document.createElement('p')
-    NovoNome.classList.add('name')
-    NovoNome.textContent=`${link.name}`
-    NovaInfo.appendChild(NovoNome)
+    const nome = document.createElement('p')
+    nome.classList.add('name')
+    nome.textContent = contato.name
 
-    const NovoNumero=document.createElement('p')
-    NovoNumero.textContent=`${link.description}`
-    NovaInfo.appendChild(NovoNumero)
-    
-    NovoCard.appendChild(NovaInfo)
-    contatos.appendChild(NovoCard)
+    const descricao = document.createElement('p')
+    descricao.textContent = contato.description
 
-    NovoCard.addEventListener('click', async function(){
-        
-        await preencherConversa(link.name)
-    })
+    info.appendChild(nome)
+    info.appendChild(descricao)
+    card.appendChild(info)
+
+    card.addEventListener('click', () => carregarConversa(contato.name))
+    listaContatos.appendChild(card)
 }
 
-async function preencherContatos() {
-    const contato= await pesquisarContatos()
-    const contatos=document.getElementById('contatos')
-    contato.dados_contato.forEach(criarContato)
+async function carregarContatos() {
+    const dados = await buscarContatos()
+    dados.dados_contato.forEach(criarCardContato)
 }
 
-/*************************************************************************************************/
+async function buscarConversa(nomeContato) {
+    const url = `https://giovanna-whatsapp.onrender.com/v1/whatsapp/conversas?numero=11987876567&contato=${nomeContato}`
+    const response = await fetch(url)
+    const data = await response.json()
+    return data
+}
 
-async function preencherConversa(name) {
-    const data = await pesquisarConversa(name);
+async function carregarConversa(nomeContato) {
+    const data = await buscarConversa(nomeContato)
     const conversa = data.conversas[0]
-    criarConversa(conversa);
-}
+    const areaMensagens = document.querySelector('.chat-messages')
+    areaMensagens.innerHTML = '' // limpa conteúdo anterior
 
-async function pesquisarConversa(name){
-    const url=`https://giovanna-whatsapp.onrender.com/v1/whatsapp/conversas?numero=11987876567&contato=${name}`
-    try {
-        const response = await fetch(url)
-        const data = await response.json()
-        return data
-    } catch (error) {
-        console.error("Erro ao buscar informações:", error)
-        return null
-    }
-}
+    // Cabeçalho do contato
+    const cabecalho = document.createElement('div')
+    cabecalho.classList.add('perfil')
 
-async function criarConversa(conversa){
-    const conversas=document.getElementById('conversas')
-    conversas.replaceChildren()
-    const perfil=document.createElement('div')
-    perfil.classList.add('perfil')
+    const img = document.createElement('img')
+    img.src = conversa.profile
+    cabecalho.appendChild(img)
 
-    const imgperfil = document.createElement('img')
-    imgperfil.src = conversa.profile
-    perfil.appendChild(imgperfil)
+    const info = document.createElement('div')
+    info.classList.add('info')
 
+    const nome = document.createElement('p')
+    nome.classList.add('name')
+    nome.textContent = conversa.name
 
-    const NovaInfo=document.createElement('div')
-    NovaInfo.classList.add('info')
-    perfil.appendChild(NovaInfo)
+    const descricao = document.createElement('p')
+    descricao.textContent = conversa.description
 
-    const NovoNome=document.createElement('p')
-    NovoNome.classList.add('name')
-    NovoNome.textContent=`${conversa.name}`
-    NovaInfo.appendChild(NovoNome)
+    info.appendChild(nome)
+    info.appendChild(descricao)
+    cabecalho.appendChild(info)
+    areaMensagens.appendChild(cabecalho)
 
-    const NovoNumero=document.createElement('p')
-    NovoNumero.textContent=`${conversa.description}`
-    NovaInfo.appendChild(NovoNumero)
-
-    conversas.appendChild(perfil)
-
+    // Mensagens
     const chat = document.createElement('div')
     chat.classList.add('chat')
 
-    conversa.conversas.forEach(message => {
-        const sender = document.createElement('p')
-        sender.classList.add('sender')
-        sender.textContent=`${message.sender}`
-        chat.appendChild(sender)
+    conversa.conversas.forEach(msg => {
+        const remetente = document.createElement('p')
+        remetente.classList.add('sender')
+        remetente.textContent = msg.sender
 
-        const autor = document.createElement('p')
-        autor.classList.add('autor')
-        autor.textContent=`${message.content}`
-        chat.appendChild(autor)
+        const conteudo = document.createElement('p')
+        conteudo.classList.add('autor')
+        conteudo.textContent = msg.content
+
+        chat.appendChild(remetente)
+        chat.appendChild(conteudo)
     })
 
-    conversas.appendChild(chat)
-
-    const message = document.createElement('div')
-    message.placeholder='Enviar Uma mensagem'
-    message.classList.add('message')
-
-    const digite= document.createElement('input')
-    digite.classList.add('digite')
-    digite.classList.add('message')
-
-    message.appendChild(digite)
-
-    const enviar = document.createElement('button')
-    enviar.textContent='ENVIAR'
-    enviar.classList.add('enviar')
-
-    message.appendChild(enviar)
-
-    conversas.appendChild(message)
-
+    areaMensagens.appendChild(chat)
 }
 
-preencherContatos()
+// Inicializa os contatos
+carregarContatos()
